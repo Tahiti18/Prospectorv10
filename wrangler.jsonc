@@ -9,8 +9,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "webapp-production",
-      "database_id": "PLACEHOLDER_DATABASE_ID"
+      "database_name": "prospector-os-production",
+      "database_id": "26bf9292-ce26-4f11-96cf-5973be19b90c"
     }
   ]
 }
