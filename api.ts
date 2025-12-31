@@ -1,6 +1,6 @@
 // API Configuration
 export const API_BASE_URL = import.meta.env.DEV 
-  ? 'http://localhost:3001/api' 
+  ? 'https://3001-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api'
   : '/api';
 
 // API Helper Functions

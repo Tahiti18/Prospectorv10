@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Lead, RegionConfig, VaultAsset, Proposal } from './types';
+import { api } from './api';
 
 // GLOBAL OVERLAYS
 import KeyManager from './components/KeyManager';
@@ -85,26 +86,121 @@ const App: React.FC = () => {
   const [showContactModal, setShowContactModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
 
-  // --- PERSISTENCE LAYER (AUTO-SAVE) ---
+  // --- DATA LOADING STATE ---
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // --- LOAD DATA FROM API ---
   useEffect(() => {
-    // Load state from local storage on mount
-    try {
-      const savedLeads = localStorage.getItem('pomelli_leads');
-      const savedAssets = localStorage.getItem('pomelli_assets');
-      const savedProposals = localStorage.getItem('pomelli_proposals');
-      
-      if (savedLeads) setLeads(JSON.parse(savedLeads));
-      if (savedAssets) setAssets(JSON.parse(savedAssets));
-      if (savedProposals) setProposals(JSON.parse(savedProposals));
-    } catch (e) {
-      console.error("Auto-Load Failed:", e);
-    }
+    const loadData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+        
+        // Load all data from API in parallel
+        const [leadsData, assetsData, proposalsData] = await Promise.all([
+          api.getLeads().catch(err => { console.error('Failed to load leads:', err); return []; }),
+          api.getAssets().catch(err => { console.error('Failed to load assets:', err); return []; }),
+          api.getProposals().catch(err => { console.error('Failed to load proposals:', err); return []; })
+        ]);
+        
+        setLeads(leadsData);
+        setAssets(assetsData);
+        setProposals(proposalsData);
+        
+        console.log('✅ Data loaded from API:', { 
+          leads: leadsData.length, 
+          assets: assetsData.length, 
+          proposals: proposalsData.length 
+        });
+      } catch (e) {
+        console.error("Failed to load data from API:", e);
+        setError("Failed to connect to backend API");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    loadData();
   }, []);
 
-  // Save state whenever it changes
-  useEffect(() => { localStorage.setItem('pomelli_leads', JSON.stringify(leads)); }, [leads]);
-  useEffect(() => { localStorage.setItem('pomelli_assets', JSON.stringify(assets)); }, [assets]);
-  useEffect(() => { localStorage.setItem('pomelli_proposals', JSON.stringify(proposals)); }, [proposals]);
+  // --- CRUD OPERATIONS ---
+  const addLead = async (lead: Lead) => {
+    try {
+      await api.createLead(lead);
+      setLeads(prev => [...prev, lead]);
+      console.log('✅ Lead created:', lead.businessName);
+    } catch (e) {
+      console.error('Failed to create lead:', e);
+      setError('Failed to create lead');
+    }
+  };
+
+  const updateLead = async (rank: number, updatedLead: Lead) => {
+    try {
+      await api.updateLead(rank, updatedLead);
+      setLeads(prev => prev.map(l => l.rank === rank ? updatedLead : l));
+      console.log('✅ Lead updated:', updatedLead.businessName);
+    } catch (e) {
+      console.error('Failed to update lead:', e);
+      setError('Failed to update lead');
+    }
+  };
+
+  const deleteLead = async (rank: number) => {
+    try {
+      await api.deleteLead(rank);
+      setLeads(prev => prev.filter(l => l.rank !== rank));
+      console.log('✅ Lead deleted:', rank);
+    } catch (e) {
+      console.error('Failed to delete lead:', e);
+      setError('Failed to delete lead');
+    }
+  };
+
+  const addAsset = async (asset: VaultAsset) => {
+    try {
+      await api.createAsset(asset);
+      setAssets(prev => [...prev, asset]);
+      console.log('✅ Asset created:', asset.title);
+    } catch (e) {
+      console.error('Failed to create asset:', e);
+      setError('Failed to create asset');
+    }
+  };
+
+  const deleteAsset = async (id: string) => {
+    try {
+      await api.deleteAsset(id);
+      setAssets(prev => prev.filter(a => a.id !== id));
+      console.log('✅ Asset deleted:', id);
+    } catch (e) {
+      console.error('Failed to delete asset:', e);
+      setError('Failed to delete asset');
+    }
+  };
+
+  const addProposal = async (proposal: Proposal) => {
+    try {
+      await api.createProposal(proposal);
+      setProposals(prev => [...prev, proposal]);
+      console.log('✅ Proposal created:', proposal.leadName);
+    } catch (e) {
+      console.error('Failed to create proposal:', e);
+      setError('Failed to create proposal');
+    }
+  };
+
+  const deleteProposal = async (id: string) => {
+    try {
+      await api.deleteProposal(id);
+      setProposals(prev => prev.filter(p => p.id !== id));
+      console.log('✅ Proposal deleted:', id);
+    } catch (e) {
+      console.error('Failed to delete proposal:', e);
+      setError('Failed to delete proposal');
+    }
+  };
 
   // --- KEYBOARD SHORTCUTS ---
   useEffect(() => {
@@ -190,6 +286,27 @@ const App: React.FC = () => {
 
   return (
     <div className={`min-h-screen flex flex-col font-sans pb-20 transition-colors duration-500 ${isDarkMode ? 'bg-[#020617] text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+      
+      {/* LOADING STATE */}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]">
+          <div className="text-center">
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mb-4"></div>
+            <p className="text-slate-400 text-sm font-mono">Loading Intel Engine...</p>
+          </div>
+        </div>
+      )}
+
+      {/* ERROR NOTIFICATION */}
+      {error && (
+        <div className="fixed top-20 right-6 z-50 bg-red-500/90 backdrop-blur-xl border border-red-400 rounded-xl px-6 py-4 shadow-2xl animate-pulse">
+          <div className="flex items-center gap-3">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p className="text-white text-sm font-semibold">{error}</p>
+            <button onClick={() => setError(null)} className="ml-2 text-white/80 hover:text-white">✕</button>
+          </div>
+        </div>
+      )}
       
       {/* HEADER */}
       <header className="sticky top-0 z-40 bg-[#0f172a]/90 backdrop-blur-xl border-b border-white/5 shadow-lg">
