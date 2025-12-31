@@ -4,6 +4,7 @@ import { cors } from 'hono/cors';
 type Bindings = {
   DB: D1Database;
   GEMINI_API_KEY: string;
+  ASSETS: any;
 }
 
 const app = new Hono<{ Bindings: Bindings }>();
@@ -13,7 +14,6 @@ app.use('/api/*', cors());
 
 // ===== LEADS API =====
 
-// Get all leads
 app.get('/api/leads', async (c) => {
   try {
     const { results } = await c.env.DB.prepare(`
@@ -26,7 +26,6 @@ app.get('/api/leads', async (c) => {
   }
 });
 
-// Get single lead by rank
 app.get('/api/leads/:rank', async (c) => {
   try {
     const rank = parseInt(c.req.param('rank'));
@@ -44,7 +43,6 @@ app.get('/api/leads/:rank', async (c) => {
   }
 });
 
-// Create new lead
 app.post('/api/leads', async (c) => {
   try {
     const lead = await c.req.json();
@@ -107,7 +105,6 @@ app.post('/api/leads', async (c) => {
   }
 });
 
-// Update lead
 app.put('/api/leads/:rank', async (c) => {
   try {
     const rank = parseInt(c.req.param('rank'));
@@ -143,7 +140,6 @@ app.put('/api/leads/:rank', async (c) => {
   }
 });
 
-// Delete lead
 app.delete('/api/leads/:rank', async (c) => {
   try {
     const rank = parseInt(c.req.param('rank'));
@@ -157,7 +153,6 @@ app.delete('/api/leads/:rank', async (c) => {
 
 // ===== ASSETS API =====
 
-// Get all assets
 app.get('/api/assets', async (c) => {
   try {
     const { results } = await c.env.DB.prepare(`
@@ -170,7 +165,6 @@ app.get('/api/assets', async (c) => {
   }
 });
 
-// Create new asset
 app.post('/api/assets', async (c) => {
   try {
     const asset = await c.req.json();
@@ -188,7 +182,6 @@ app.post('/api/assets', async (c) => {
   }
 });
 
-// Delete asset
 app.delete('/api/assets/:id', async (c) => {
   try {
     const id = c.req.param('id');
@@ -202,7 +195,6 @@ app.delete('/api/assets/:id', async (c) => {
 
 // ===== PROPOSALS API =====
 
-// Get all proposals
 app.get('/api/proposals', async (c) => {
   try {
     const { results } = await c.env.DB.prepare(`
@@ -215,7 +207,6 @@ app.get('/api/proposals', async (c) => {
   }
 });
 
-// Create new proposal
 app.post('/api/proposals', async (c) => {
   try {
     const proposal = await c.req.json();
@@ -242,7 +233,6 @@ app.post('/api/proposals', async (c) => {
   }
 });
 
-// Delete proposal
 app.delete('/api/proposals/:id', async (c) => {
   try {
     const id = c.req.param('id');
@@ -254,58 +244,18 @@ app.delete('/api/proposals/:id', async (c) => {
   }
 });
 
-// Health check
 app.get('/api/health', (c) => {
   return c.json({ status: 'ok', timestamp: Date.now() });
 });
 
-// Serve the main HTML
-app.get('/', (c) => {
-  return c.html(`<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prospector OS | Lead Intel Engine - API Backend</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-slate-900 text-white p-8">
-    <div class="max-w-4xl mx-auto">
-        <h1 class="text-4xl font-bold mb-6 text-indigo-400">🎯 Prospector OS | Lead Intel Engine</h1>
-        <p class="text-lg mb-8 text-slate-300">Backend API is running successfully with Cloudflare D1 database.</p>
-        
-        <div class="bg-slate-800 rounded-lg p-6 mb-6">
-            <h2 class="text-2xl font-bold mb-4 text-emerald-400">✅ Available API Endpoints:</h2>
-            <ul class="space-y-2 font-mono text-sm">
-                <li class="text-slate-300"><span class="text-blue-400">GET</span> /api/health - Health check</li>
-                <li class="text-slate-300"><span class="text-blue-400">GET</span> /api/leads - Get all leads</li>
-                <li class="text-slate-300"><span class="text-blue-400">GET</span> /api/leads/:rank - Get specific lead</li>
-                <li class="text-slate-300"><span class="text-green-400">POST</span> /api/leads - Create new lead</li>
-                <li class="text-slate-300"><span class="text-yellow-400">PUT</span> /api/leads/:rank - Update lead</li>
-                <li class="text-slate-300"><span class="text-red-400">DELETE</span> /api/leads/:rank - Delete lead</li>
-                <li class="text-slate-300"><span class="text-blue-400">GET</span> /api/assets - Get all assets</li>
-                <li class="text-slate-300"><span class="text-green-400">POST</span> /api/assets - Create asset</li>
-                <li class="text-slate-300"><span class="text-red-400">DELETE</span> /api/assets/:id - Delete asset</li>
-                <li class="text-slate-300"><span class="text-blue-400">GET</span> /api/proposals - Get all proposals</li>
-                <li class="text-slate-300"><span class="text-green-400">POST</span> /api/proposals - Create proposal</li>
-                <li class="text-slate-300"><span class="text-red-400">DELETE</span> /api/proposals/:id - Delete proposal</li>
-            </ul>
-        </div>
-        
-        <div class="bg-slate-800 rounded-lg p-6">
-            <h2 class="text-2xl font-bold mb-4 text-amber-400">📋 Quick Test:</h2>
-            <pre class="bg-slate-900 p-4 rounded overflow-x-auto"><code>curl https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/health
-curl https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/leads</code></pre>
-        </div>
-        
-        <div class="mt-8 text-sm text-slate-400">
-            <p>📦 Database: Cloudflare D1 (SQLite)</p>
-            <p>🚀 Framework: Hono + TypeScript</p>
-            <p>☁️ Deployment: Cloudflare Pages/Workers</p>
-        </div>
-    </div>
-</body>
-</html>`);
+// Serve static files - the @hono/vite-cloudflare-pages plugin handles this automatically
+// by serving files from the dist directory via ASSETS binding
+
+app.get('*', async (c) => {
+  // For Cloudflare Pages, static assets are automatically served
+  // This is handled by the platform, not by our code
+  // If a file doesn't exist, return 404
+  return c.notFound();
 });
 
 export default app;
