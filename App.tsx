@@ -93,35 +93,52 @@ const App: React.FC = () => {
   // --- LOAD DATA FROM API ---
   useEffect(() => {
     const loadData = async () => {
+      console.log('🚀 Starting data load from API...');
       try {
         setIsLoading(true);
         setError(null);
         
         // Load all data from API in parallel
+        console.log('📡 Fetching leads, assets, and proposals...');
         const [leadsData, assetsData, proposalsData] = await Promise.all([
-          api.getLeads().catch(err => { console.error('Failed to load leads:', err); return []; }),
-          api.getAssets().catch(err => { console.error('Failed to load assets:', err); return []; }),
-          api.getProposals().catch(err => { console.error('Failed to load proposals:', err); return []; })
+          api.getLeads().catch(err => { console.error('❌ Failed to load leads:', err); return []; }),
+          api.getAssets().catch(err => { console.error('❌ Failed to load assets:', err); return []; }),
+          api.getProposals().catch(err => { console.error('❌ Failed to load proposals:', err); return []; })
         ]);
+        
+        console.log('✅ Data received:', { 
+          leads: leadsData.length, 
+          assets: assetsData.length, 
+          proposals: proposalsData.length 
+        });
         
         setLeads(leadsData);
         setAssets(assetsData);
         setProposals(proposalsData);
         
-        console.log('✅ Data loaded from API:', { 
-          leads: leadsData.length, 
-          assets: assetsData.length, 
-          proposals: proposalsData.length 
-        });
+        console.log('✅ Data loaded from API successfully!');
       } catch (e) {
-        console.error("Failed to load data from API:", e);
+        console.error("❌ Failed to load data from API:", e);
         setError("Failed to connect to backend API");
+        setLeads([]);
+        setAssets([]);
+        setProposals([]);
       } finally {
+        console.log('✅ Loading complete, hiding spinner...');
         setIsLoading(false);
       }
     };
     
-    loadData();
+    // Add timeout to prevent infinite loading
+    const timeout = setTimeout(() => {
+      console.error('⏱️ API load timeout after 10 seconds');
+      setIsLoading(false);
+      setError('API connection timeout');
+    }, 10000);
+    
+    loadData().then(() => clearTimeout(timeout));
+    
+    return () => clearTimeout(timeout);
   }, []);
 
   // --- CRUD OPERATIONS ---
