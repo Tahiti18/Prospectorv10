@@ -7,6 +7,7 @@
     "dev": "vite",
     "dev:sandbox": "wrangler pages dev dist --d1=webapp-production --local --ip 0.0.0.0 --port 3000",
     "build": "vite build",
+    "build:backend": "vite build --config vite.config.backend.ts",
     "preview": "wrangler pages dev dist",
     "deploy": "npm run build && wrangler pages deploy dist",
     "deploy:prod": "npm run build && wrangler pages deploy dist --project-name webapp",
