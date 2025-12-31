@@ -11,7 +11,11 @@ const app = new Hono<{ Bindings: Bindings }>();
 
 // Enable CORS for all routes - allow frontend on port 3000
 app.use('*', cors({
-  origin: ['http://localhost:3000', 'https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai'],
+  origin: [
+    'http://localhost:3000', 
+    'https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai',
+    /https:\/\/3000-.*\.sandbox\.novita\.ai$/
+  ],
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true,
