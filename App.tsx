@@ -291,8 +291,9 @@ const App: React.FC = () => {
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#020617]">
           <div className="text-center">
-            <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-2 border-indigo-500 mb-4"></div>
-            <p className="text-slate-400 text-sm font-mono">Loading Intel Engine...</p>
+            <div className="inline-block animate-spin rounded-full h-16 w-16 border-b-4 border-t-4 border-indigo-500 mb-4"></div>
+            <p className="text-indigo-400 text-lg font-bold font-mono animate-pulse">LOADING INTEL ENGINE...</p>
+            <p className="text-slate-500 text-sm font-mono mt-2">Connecting to backend API...</p>
           </div>
         </div>
       )}
