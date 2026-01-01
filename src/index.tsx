@@ -1,5 +1,6 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
+import indexHTML from '../dist/index.html?raw';
 
 type Bindings = {
   DB: D1Database;
@@ -257,14 +258,55 @@ app.get('/api/health', (c) => {
   return c.json({ status: 'ok', timestamp: Date.now() });
 });
 
-// Serve static files - the @hono/vite-cloudflare-pages plugin handles this automatically
-// by serving files from the dist directory via ASSETS binding
+// Serve static assets with proper MIME types
+app.get('/assets/*', async (c) => {
+  const path = c.req.path;
+  try {
+    // Use the ASSETS binding to fetch the static file
+    const asset = await c.env.ASSETS.fetch(new Request(`https://fake-host${path}`));
+    
+    // Set proper MIME type based on file extension
+    const headers = new Headers(asset.headers);
+    if (path.endsWith('.js')) {
+      headers.set('Content-Type', 'application/javascript; charset=utf-8');
+    } else if (path.endsWith('.css')) {
+      headers.set('Content-Type', 'text/css; charset=utf-8');
+    } else if (path.endsWith('.html')) {
+      headers.set('Content-Type', 'text/html; charset=utf-8');
+    }
+    
+    return new Response(asset.body, {
+      status: asset.status,
+      statusText: asset.statusText,
+      headers
+    });
+  } catch (e) {
+    return c.notFound();
+  }
+});
 
-app.get('*', async (c) => {
-  // For Cloudflare Pages, static assets are automatically served
-  // This is handled by the platform, not by our code
-  // If a file doesn't exist, return 404
+// Serve the React app's index.html for the root route and SPA routes
+app.get('/', (c) => {
+  return c.html(indexHTML);
+});
+
+// Serve JavaScript assets with proper MIME type
+app.get('/assets/*.js', async (c) => {
+  // Let Cloudflare Pages serve the static file but return notFound to trigger it
+  // Actually, we need to explicitly serve with proper headers
+  // Since assets are in exclude list, this won't be reached
   return c.notFound();
+});
+
+// For all other non-API routes (SPA client-side routing), serve index.html
+app.get('*', (c) => {
+  const path = c.req.path;
+  // If it's an API route or asset, it should have been handled already
+  if (path.startsWith('/api/')) {
+    return c.notFound();
+  }
+  // For all other routes (SPA routes), serve index.html
+  return c.html(indexHTML);
 });
 
 export default app;
