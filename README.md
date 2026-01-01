@@ -1,498 +1,265 @@
-# Prospector OS | Lead Intel Engine
+# Prospector OS - Lead Intelligence Engine
 
-![Prospector OS Banner](https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6)
+🎉 **Successfully Deployed to Cloudflare Pages!**
 
-## 🎯 Project Overview
+## 🌐 Live URLs
 
-**Prospector OS** is a high-fidelity AI prospecting and lead intelligence system designed for agencies and sales teams. This powerful platform combines AI-powered lead discovery, scoring diagnostics, strategic planning, and outreach management into a unified operating system.
+- **Production**: https://prospector-os.pages.dev
+- **API Health**: https://prospector-os.pages.dev/api/health
+- **Cloudflare Dashboard**: https://dash.cloudflare.com/99cf70b7ef4be2dbb9d562584e3409b1/pages
+
+## 📊 Project Overview
+
+**Prospector OS** is a comprehensive lead intelligence and management system built with React 19, Hono, and Cloudflare D1 Database. It features 60+ components for tracking leads through a complete lifecycle from discovery to conversion.
 
 ### Key Features
 
-✅ **Lead Intelligence Engine** - Comprehensive lead discovery and scoring system  
-✅ **AI-Powered Analytics** - Deep diagnostics with visual, social, and ticket scoring  
-✅ **Strategic Planning** - Automated angle identification and personalized hooks  
-✅ **Mission Management** - Track leads through SCAN → SCORE → STRATEGIZE → SEND → CLOSE phases  
-✅ **Asset Vault** - Centralized media and proposal management  
-✅ **Proposal Studio** - Generate and track client proposals  
-✅ **Cloudflare D1 Database** - Persistent, globally distributed data storage  
-✅ **RESTful API** - Full CRUD operations for leads, assets, and proposals
+- **Lead Management**: Track and score leads across multiple dimensions
+- **AI-Powered**: Integration with Gemini AI for pitch generation
+- **Real-time Dashboard**: Comprehensive statistics and analytics
+- **Asset Vault**: Store and manage digital assets for proposals
+- **Proposal Generator**: Create customized pitches for each lead
+- **Multi-Phase Pipeline**: SCAN → SCORE → STRATEGIZE → EXECUTE → CLOSE
+- **Region-Based Filtering**: Cyprus regions (Limassol, Nicosia, Paphos, Larnaca, Famagusta)
 
----
+## 🗄️ Data Architecture
 
-## 🌐 Live Deployment
+### Cloudflare D1 Database
 
-### Public URLs
+**Production Database**: `prospector-os-production` (26bf9292-ce26-4f11-96cf-5973be19b90c)
 
-- **API Backend**: https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai
-- **Health Check**: https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/health
-- **Leads API**: https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/leads
+**Schema**:
+- **leads** (36 fields): Complete lead lifecycle tracking
+  - Identity: businessName, websiteUrl, niche, city, region, contact info
+  - Diagnostics: visualScore, socialScore, ticketScore, reachabilityScore
+  - Strategics: bestAngle, personalizedHook, firstDeliverable
+  - Mission: currentPhase, status, conversionProbability, notes
+  
+- **assets** (6 fields): Digital resource management
+  - id, url, title, type, timestamp, content
+  
+- **proposals** (8 fields): Pitch tracking and status
+  - id, leadName, niche, pitchText, mockupUrl, videoUrl, timestamp, status
 
-### Test the API
+### Sample Data
 
-```bash
-# Health check
-curl https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/health
+✅ **3 Leads**:
+1. Elite Fitness Studios (Limassol) - Score: 85, Phase: STRATEGIZE
+2. Coastal Dental Care (Paphos) - Score: 72, Phase: SCORE
+3. Artisan Bakery Co (Nicosia) - Score: 64, Phase: SCAN
 
-# Get all leads
-curl https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/leads
+✅ **3 Assets**: Design templates, case studies, outreach scripts
 
-# Get specific lead
-curl https://3000-i0cpklycmklcu6n1lnlbc-de59bda9.sandbox.novita.ai/api/leads/1
-```
+✅ **2 Proposals**: Active proposals for Elite Fitness and Coastal Dental
 
----
+## 🛠️ Technology Stack
 
-## 📊 Data Architecture
-
-### Database Schema
-
-The application uses **Cloudflare D1** (SQLite-based) for persistent data storage with three main tables:
-
-#### 1. **Leads Table** - Core lead intelligence data
-```sql
-- Identity Layer: businessName, websiteUrl, niche, contact info
-- Diagnostics Layer: visualScore, socialScore, ticketScore, reachabilityScore
-- Strategics Layer: bestAngle, personalizedHook, firstDeliverable
-- Mission Layer: currentPhase, status, conversionProbability
-```
-
-#### 2. **Assets Table** - Media vault management
-```sql
-- id, url, title, type (pitch/lab/external/image/report/mockup/sonic/product)
-- timestamp, content
-```
-
-#### 3. **Proposals Table** - Proposal tracking
-```sql
-- id, leadName, niche, pitchText, mockupUrl, videoUrl
-- timestamp, status (pending/viewed/accepted)
-```
-
-### Data Flow
-
-```
-React Frontend (Local Storage) 
-    ↓
-Migration to Cloudflare D1
-    ↓
-Hono REST API (CRUD Operations)
-    ↓
-Globally Distributed D1 Database
-```
-
----
-
-## 🛠️ Tech Stack
+### Frontend
+- **React 19** with TypeScript
+- **Tailwind CSS** for styling
+- **Vite** for build tooling
+- **ESM Module System** for proper bundling
 
 ### Backend
-- **Framework**: Hono 4.0+ (Lightweight, fast web framework)
-- **Runtime**: Cloudflare Workers (Edge computing)
-- **Database**: Cloudflare D1 (Globally distributed SQLite)
-- **Language**: TypeScript 5.8+
-- **Build Tool**: Vite 6.2+ with @hono/vite-cloudflare-pages plugin
+- **Hono Framework** - Lightning-fast web framework
+- **Cloudflare Workers** - Edge runtime
+- **Cloudflare D1** - Globally distributed SQLite database
+- **REST API** - Full CRUD operations
 
-### Frontend (Original)
-- **Framework**: React 19.2+
-- **AI Integration**: Google Gemini AI API (@google/genai)
-- **Styling**: TailwindCSS (CDN)
-- **Fonts**: Inter & JetBrains Mono (Google Fonts)
+### Deployment
+- **Platform**: Cloudflare Pages
+- **CDN**: Global edge network
+- **SSL**: Automatic HTTPS
+- **Cost**: FREE tier (included in Cloudflare Pages free plan)
 
-### DevOps
-- **Package Manager**: npm
-- **Process Manager**: PM2 (development)
-- **Deployment**: Wrangler CLI → Cloudflare Pages
-- **Version Control**: Git
+## 🚀 API Endpoints
 
----
+All endpoints are available at `https://prospector-os.pages.dev/api/*`
 
-## 📋 API Reference
+### Leads
+- `GET /api/leads` - Get all leads
+- `GET /api/leads/:rank` - Get specific lead
+- `POST /api/leads` - Create new lead
+- `PUT /api/leads/:rank` - Update lead
+- `DELETE /api/leads/:rank` - Delete lead
 
-### Leads Endpoints
+### Assets
+- `GET /api/assets` - Get all assets
+- `POST /api/assets` - Create new asset
+- `DELETE /api/assets/:id` - Delete asset
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/leads` | Get all leads |
-| GET | `/api/leads/:rank` | Get specific lead by rank |
-| POST | `/api/leads` | Create new lead |
-| PUT | `/api/leads/:rank` | Update lead |
-| DELETE | `/api/leads/:rank` | Delete lead |
+### Proposals
+- `GET /api/proposals` - Get all proposals
+- `POST /api/proposals` - Create new proposal
+- `DELETE /api/proposals/:id` - Delete proposal
 
-### Assets Endpoints
+### Health
+- `GET /api/health` - Service health check
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/assets` | Get all assets |
-| POST | `/api/assets` | Create new asset |
-| DELETE | `/api/assets/:id` | Delete asset |
-
-### Proposals Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/proposals` | Get all proposals |
-| POST | `/api/proposals` | Create new proposal |
-| DELETE | `/api/proposals/:id` | Delete proposal |
-
-### System Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/health` | Health check |
-| GET | `/` | API documentation page |
-
----
-
-## 🚀 Development Guide
-
-### Prerequisites
-- Node.js 20+ 
-- npm 10+
-- Git
-
-### Installation
-
-```bash
-# Clone or extract project
-cd /home/user/webapp
-
-# Install dependencies
-npm install
-
-# Configure environment variables
-cp .env.local.example .env.local
-# Add your GEMINI_API_KEY=your_key_here
-```
-
-### Database Setup
-
-```bash
-# Apply migrations locally
-npm run db:migrate:local
-
-# Seed with sample data
-npm run db:seed
-
-# Reset database (clear and re-seed)
-npm run db:reset
-
-# Query local database
-npm run db:console:local
-```
-
-### Development Workflow
-
-```bash
-# Build the project
-npm run build
-
-# Start development server with PM2
-pm2 start ecosystem.config.cjs
-
-# Test the API
-npm run test
-
-# Check logs
-pm2 logs prospector-os --nostream
-
-# Restart server
-pm2 restart prospector-os
-
-# Stop server
-pm2 stop prospector-os
-```
-
-### Available Scripts
-
-```json
-{
-  "dev": "vite",
-  "dev:sandbox": "wrangler pages dev dist --d1=webapp-production --local --ip 0.0.0.0 --port 3000",
-  "build": "vite build",
-  "deploy": "npm run build && wrangler pages deploy dist",
-  "deploy:prod": "npm run build && wrangler pages deploy dist --project-name webapp",
-  "db:migrate:local": "wrangler d1 migrations apply webapp-production --local",
-  "db:migrate:prod": "wrangler d1 migrations apply webapp-production",
-  "db:seed": "wrangler d1 execute webapp-production --local --file=./seed.sql",
-  "db:reset": "rm -rf .wrangler/state/v3/d1 && npm run db:migrate:local && npm run db:seed"
-}
-```
-
----
-
-## 🌍 Production Deployment
-
-### Prerequisites
-1. Cloudflare account
-2. Wrangler CLI configured
-3. D1 database created
-
-### Deployment Steps
-
-```bash
-# 1. Create production D1 database
-npx wrangler d1 create webapp-production
-
-# 2. Update wrangler.jsonc with database_id
-# Copy the database_id from step 1
-
-# 3. Apply migrations to production
-npm run db:migrate:prod
-
-# 4. Build and deploy
-npm run deploy:prod
-```
-
-### Post-Deployment
-
-```bash
-# Set production environment variables
-npx wrangler pages secret put GEMINI_API_KEY --project-name webapp
-
-# Verify deployment
-curl https://your-project.pages.dev/api/health
-```
-
----
-
-## 📂 Project Structure
+## 📁 Project Structure
 
 ```
 webapp/
 ├── src/
-│   └── index.tsx          # Hono backend API server
-├── migrations/
-│   └── 0001_initial_schema.sql  # D1 database schema
-├── public/                # Frontend React components (original)
-│   ├── App.tsx
-│   ├── components/        # 60+ React components
-│   ├── types.ts
-│   └── utils/
-├── dist/                  # Build output directory
+│   └── index.tsx           # Hono backend API
+├── components/             # 60+ React components
+│   ├── Dashboard.tsx       # Main dashboard
+│   ├── LeadTable.tsx       # Lead management
+│   ├── AIPitchGenerator.tsx # AI integration
+│   ├── ResourceMonitor.tsx # System stats
+│   └── ...                 # And many more
+├── utils/                  # Utility functions
+├── migrations/             # D1 database migrations
+│   └── 0001_initial_schema.sql
+├── dist/                   # Build output
 │   ├── _worker.js         # Compiled Hono worker
-│   └── _routes.json       # Cloudflare Pages routing
-├── .git/                  # Git repository
-├── .gitignore             # Git ignore patterns
-├── .dev.vars              # Local environment variables
-├── ecosystem.config.cjs   # PM2 configuration
-├── wrangler.jsonc         # Cloudflare configuration
-├── package.json           # Dependencies and scripts
-├── tsconfig.json          # TypeScript configuration
-├── vite.config.ts         # Vite build configuration
-├── seed.sql               # Sample test data
-└── README.md              # This file
+│   ├── assets/            # Bundled React app
+│   ├── index.html         # Entry HTML
+│   └── _routes.json       # Routing configuration
+├── App.tsx                 # Main React application
+├── main.tsx                # React entry point
+├── api.ts                  # API client functions
+├── types.ts                # TypeScript definitions
+├── vite.config.ts          # Frontend build config
+├── vite.config.backend.ts  # Backend build config
+├── wrangler.jsonc          # Cloudflare configuration
+├── package.json            # Dependencies and scripts
+└── README.md               # This file
 ```
 
----
+## 🔧 Local Development
 
-## ✅ Currently Completed Features
+### Prerequisites
+- Node.js 20+
+- npm or pnpm
+- Wrangler CLI (included in devDependencies)
 
-### Backend Infrastructure ✅
-- [x] Hono REST API with TypeScript
-- [x] Cloudflare D1 database integration
-- [x] Complete CRUD operations for leads
-- [x] Complete CRUD operations for assets
-- [x] Complete CRUD operations for proposals
-- [x] Database migrations and seeding
-- [x] Local development environment with PM2
-- [x] API documentation page
-
-### Data Models ✅
-- [x] Lead entity (identity + diagnostics + strategics + mission)
-- [x] Asset entity (media vault)
-- [x] Proposal entity (pitch tracking)
-- [x] Database indexes for performance
-- [x] Sample test data (3 leads, 3 assets, 2 proposals)
-
-### Development Tools ✅
-- [x] Git version control
-- [x] Comprehensive .gitignore
-- [x] PM2 process management
-- [x] Environment variable configuration
-- [x] Build and deployment scripts
-
----
-
-## 🚧 Features Not Yet Implemented
-
-### Frontend Integration 🔨
-- [ ] Connect React components to REST API
-- [ ] Replace localStorage with API calls
-- [ ] Update state management for async operations
-- [ ] Implement error handling and loading states
-- [ ] Add authentication/authorization
-
-### AI Features 🤖
-- [ ] Gemini AI integration for lead scoring
-- [ ] Automated best angle detection
-- [ ] Personalized hook generation
-- [ ] Brand kit extraction from websites
-- [ ] Voice and vision intelligence agents
-
-### Advanced Functionality 🚀
-- [ ] Real-time mission tracking
-- [ ] Outreach template system
-- [ ] Email/WhatsApp integration
-- [ ] Proposal PDF generation
-- [ ] Analytics dashboard
-- [ ] Export functionality (CSV/PDF)
-
-### Production Features 🔐
-- [ ] User authentication
-- [ ] Multi-tenancy support
-- [ ] Rate limiting
-- [ ] Caching layer
-- [ ] Monitoring and logging
-- [ ] Backup and recovery
-
----
-
-## 🎯 Recommended Next Steps
-
-### Phase 1: Frontend Connection (High Priority)
-1. **Create API service layer** - Centralized fetch wrappers for all API calls
-2. **Update App.tsx** - Replace localStorage hooks with API calls
-3. **Add loading states** - Implement spinners and skeleton screens
-4. **Error handling** - Toast notifications for API errors
-5. **Testing** - Verify all CRUD operations work end-to-end
-
-### Phase 2: AI Integration (Medium Priority)
-6. **Gemini API proxy** - Create backend endpoint to call Gemini API
-7. **Lead scoring automation** - AI-powered diagnostics
-8. **Hook generation** - AI-generated personalized messaging
-9. **Vision intelligence** - Website screenshot analysis
-
-### Phase 3: Production Readiness (Medium Priority)
-10. **Authentication** - Add user login system
-11. **Deploy to Cloudflare Pages** - Production deployment
-12. **Custom domain** - Set up professional domain
-13. **Monitoring** - Add error tracking and analytics
-
-### Phase 4: Advanced Features (Low Priority)
-14. **Email integration** - Automated outreach
-15. **Calendar integration** - Mission scheduling
-16. **Export functionality** - PDF reports and CSV exports
-17. **Team collaboration** - Multi-user support
-
----
-
-## 📖 User Guide
-
-### Getting Started
-
-1. **Access the API**: Navigate to the public URL
-2. **Test health check**: `GET /api/health`
-3. **View leads**: `GET /api/leads`
-4. **Create a lead**: `POST /api/leads` with lead data
-5. **Update lead**: `PUT /api/leads/:rank` with updated data
-6. **Delete lead**: `DELETE /api/leads/:rank`
-
-### Lead Management Workflow
-
-```
-1. SCAN → Discover potential leads
-2. SCORE → Analyze and rate leads
-3. STRATEGIZE → Plan approach and hooks
-4. SEND → Execute outreach campaign
-5. CLOSE → Convert to customer
-```
-
-### Mission Phases
-
-- **SCAN**: Initial lead discovery
-- **SCORE**: Diagnostic scoring (visual, social, ticket, reachability)
-- **STRATEGIZE**: Strategic planning (angle, hook, deliverable)
-- **SEND**: Outreach execution
-- **CLOSE**: Deal closure
-
-### Asset Grades
-
-- **A Grade**: High-value, high-engagement leads
-- **B Grade**: Medium-value prospects
-- **C Grade**: Low-priority or nurture leads
-
----
-
-## 🔒 Environment Variables
+### Setup
 
 ```bash
-# .dev.vars (local development)
-GEMINI_API_KEY=your_gemini_api_key_here
+# Install dependencies
+npm install
 
-# Production (set via wrangler)
-npx wrangler pages secret put GEMINI_API_KEY --project-name webapp
-```
+# Start local development
+npm run dev          # Frontend (Vite dev server)
+npm run dev:sandbox  # Backend (Wrangler Pages dev with D1)
 
----
-
-## 🐛 Troubleshooting
-
-### Port 3000 in use
-```bash
-npm run clean-port
-# or
-fuser -k 3000/tcp
-```
-
-### Database issues
-```bash
-npm run db:reset
-```
-
-### PM2 not starting
-```bash
-pm2 delete all
+# Or use PM2 for both
 pm2 start ecosystem.config.cjs
 ```
 
-### Build errors
+### Build
+
 ```bash
-rm -rf node_modules dist .wrangler
-npm install
+# Build for production
 npm run build
+
+# This runs:
+# 1. vite build (frontend React app)
+# 2. vite build --config vite.config.backend.ts (Hono worker)
+# 3. npm run fix-routes (custom _routes.json)
 ```
 
----
-
-## 📝 Git Workflow
+### Database Management
 
 ```bash
-# Check status
-npm run git:status
+# Local development
+npm run db:migrate:local   # Apply migrations locally
+npm run db:seed            # Seed with sample data
+npm run db:reset           # Reset local database
+npm run db:console:local   # SQLite console
 
-# Commit changes
-npm run git:commit "Your commit message"
-
-# View history
-npm run git:log
+# Production
+npm run db:migrate:prod    # Apply migrations to production
+npm run db:console:prod    # Production database console
 ```
 
----
+### Deployment
 
-## 📄 License
+```bash
+# Deploy to Cloudflare Pages
+npm run deploy
 
-This project is part of the AI Studio ecosystem.
+# Or manually
+npx wrangler pages deploy dist --project-name prospector-os
+```
 
----
+## 🔐 Environment Variables
 
-## 🤝 Contributing
+### Development (.dev.vars)
+```
+GEMINI_API_KEY=AIzaSyDEQOKtgiGUQP8Zeq3kMOVb0UUjaYDuEnk
+```
 
-This is a proprietary project. For contributions or inquiries, please contact the project maintainers.
+### Production (Cloudflare Secrets)
+```bash
+# Set production secrets
+npx wrangler pages secret put GEMINI_API_KEY --project-name prospector-os
+```
 
----
+## ✅ Deployment Checklist
+
+- [x] Cloudflare Pages project created
+- [x] D1 Database created and migrated
+- [x] Sample data seeded
+- [x] Frontend built and bundled (811 KB)
+- [x] Backend worker compiled (33 KB)
+- [x] Custom routing configured
+- [x] Static assets served with correct MIME types
+- [x] API endpoints tested and working
+- [x] GEMINI_API_KEY configured as secret
+- [x] CORS configured for API access
+- [x] Production deployment successful
+
+## 🎯 Current Status
+
+### ✅ Completed Features
+- Full CRUD API for leads, assets, proposals
+- React dashboard with 60+ components
+- D1 database integration with migrations
+- Cloudflare Pages deployment
+- API health monitoring
+- Sample data loaded and accessible
+
+### 🚧 Features Not Yet Implemented
+- AI pitch generation (Gemini API integration incomplete)
+- File upload for assets (R2 storage not configured)
+- Email/WhatsApp outreach automation
+- Advanced analytics and reporting
+- Multi-user authentication
+- Real-time notifications
+
+## 📝 Recommended Next Steps
+
+1. **Complete AI Integration**: Finish Gemini API integration for pitch generation
+2. **Add R2 Storage**: Configure Cloudflare R2 for file uploads
+3. **Implement Authentication**: Add user login/signup system
+4. **Enhanced Analytics**: Build advanced reporting dashboards
+5. **Mobile Optimization**: Improve responsive design for mobile devices
+6. **Testing**: Add unit and integration tests
+7. **Documentation**: Expand API documentation and user guides
+
+## 🐛 Known Issues
+
+1. **TailwindCSS Warning**: Using CDN version in production (should migrate to PostCSS)
+2. **Bundle Size**: React app is 811 KB (consider code splitting)
+3. **CORS**: Currently allows all sandbox origins (should restrict in production)
 
 ## 📞 Support
 
-For issues or questions:
-- Check the API documentation at `/`
-- Review the troubleshooting section
-- Examine PM2 logs: `pm2 logs prospector-os`
+- **Cloudflare Dashboard**: https://dash.cloudflare.com
+- **Cloudflare D1 Docs**: https://developers.cloudflare.com/d1/
+- **Hono Docs**: https://hono.dev/
+- **Vite Docs**: https://vitejs.dev/
+
+## 📄 License
+
+This project is private and proprietary.
 
 ---
 
-**Last Updated**: 2025-12-31  
-**Version**: 1.0.0  
-**Status**: ✅ Backend API Active | 🔨 Frontend Integration Pending
+**Last Updated**: 2026-01-01  
+**Deployment**: https://prospector-os.pages.dev  
+**Status**: ✅ ACTIVE
 
----
-
-Made with 💜 by the Prospector OS Team
+🎉 **Congratulations! Your Prospector OS is live on Cloudflare Pages!** 🎉
