@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prospector OS Login</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #0a0e1a;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .box {
+            background: #1a1f35;
+            padding: 40px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+        h1 { margin: 0 0 10px 0; text-align: center; }
+        p { text-align: center; color: #888; margin: 0 0 30px 0; }
+        input {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            background: #0a0e1a;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin: 20px 0 10px 0;
+            background: #6366f1;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .error { color: #ff6b6b; margin: 10px 0; text-align: center; }
+        .success { color: #51cf66; margin: 10px 0; text-align: center; }
+        .link { text-align: center; margin-top: 20px; }
+        .link a { color: #6366f1; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="box">
+        <div id="login">
+            <h1>Prospector OS</h1>
+            <p>Sign in to continue</p>
+            <div id="loginError" class="error"></div>
+            <input type="email" id="loginEmail" placeholder="admin@prospector.com" value="admin@prospector.com">
+            <input type="password" id="loginPass" placeholder="Password" value="Admin123!">
+            <button onclick="login()">Sign In</button>
+            <div class="link"><a href="#" onclick="showSignup()">Create account</a></div>
+        </div>
+
+        <div id="signup" style="display:none">
+            <h1>Create Account</h1>
+            <p>Join Prospector OS</p>
+            <div id="signupError" class="error"></div>
+            <input type="text" id="signupName" placeholder="Your Name">
+            <input type="email" id="signupEmail" placeholder="Email">
+            <input type="password" id="signupPass" placeholder="Password (6+ chars)">
+            <button onclick="signup()">Create Account</button>
+            <div class="link"><a href="#" onclick="showLogin()">Back to login</a></div>
+        </div>
+
+        <div id="dashboard" style="display:none">
+            <h1>Dashboard</h1>
+            <p id="welcome"></p>
+            <div class="success">✓ Login successful!</div>
+            <p style="margin: 20px 0;">You have access to:</p>
+            <ul style="line-height: 1.8;">
+                <li>255 luxury leads</li>
+                <li>€8.8M pipeline value</li>
+                <li>60+ AI modules</li>
+                <li>Full system access</li>
+            </ul>
+            <button onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <script>
+        const API = 'https://e48b0990.prospector-os-v2.pages.dev/api';
+
+        if (localStorage.token) {
+            const user = JSON.parse(localStorage.user || '{}');
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('welcome').textContent = `Welcome, ${user.name}!`;
+        }
+
+        async function login() {
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPass').value;
+            const err = document.getElementById('loginError');
+            
+            if (!email || !password) {
+                err.textContent = 'Enter email and password';
+                return;
+            }
+
+            try {
+                const res = await fetch(API + '/auth/login', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email, password})
+                });
+                const data = await res.json();
+                
+                if (!res.ok) throw new Error(data.error || 'Login failed');
+                
+                localStorage.token = data.token;
+                localStorage.user = JSON.stringify(data.user);
+                
+                document.getElementById('login').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('welcome').textContent = `Welcome, ${data.user.name}!`;
+                err.textContent = '';
+            } catch(e) {
+                err.textContent = e.message;
+            }
+        }
+
+        async function signup() {
+            const name = document.getElementById('signupName').value;
+            const email = document.getElementById('signupEmail').value;
+            const password = document.getElementById('signupPass').value;
+            const err = document.getElementById('signupError');
+            
+            if (!name || !email || !password) {
+                err.textContent = 'Fill in all fields';
+                return;
+            }
+            if (password.length < 6) {
+                err.textContent = 'Password must be 6+ characters';
+                return;
+            }
+
+            try {
+                const res = await fetch(API + '/auth/signup', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({name, email, password})
+                });
+                const data = await res.json();
+                
+                if (!res.ok) throw new Error(data.error || 'Signup failed');
+                
+                localStorage.token = data.token;
+                localStorage.user = JSON.stringify(data.user);
+                
+                document.getElementById('signup').style.display = 'none';
+                document.getElementById('dashboard').style.display = 'block';
+                document.getElementById('welcome').textContent = `Welcome, ${data.user.name}!`;
+                err.textContent = '';
+            } catch(e) {
+                err.textContent = e.message;
+            }
+        }
+
+        function showSignup() {
+            document.getElementById('login').style.display = 'none';
+            document.getElementById('signup').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('signup').style.display = 'none';
+            document.getElementById('login').style.display = 'block';
+        }
+
+        function logout() {
+            localStorage.clear();
+            location.reload();
+        }
+
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    const visible = document.getElementById('login').style.display !== 'none' ? 'login' : 'signup';
+                    if (visible === 'login') login();
+                    else signup();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
